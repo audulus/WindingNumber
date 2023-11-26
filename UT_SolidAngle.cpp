@@ -45,57 +45,9 @@
 #include <UT/UT_Debug.h>
 #endif
 
-#define TAYLOR_SERIES_ORDER 2
-
 namespace igl { namespace FastWindingNumber {
 
 namespace HDK_Sample {
-
-template<typename T,typename S>
-struct UT_SolidAngle<T,S>::BoxData
-{
-    void clear()
-    {
-        // Set everything to zero
-        memset(this,0,sizeof(*this));
-    }
-
-    using Type  = typename std::conditional<BVH_N==4 && std::is_same<T,float>::value, v4uf, UT_FixedVector<T,BVH_N>>::type;
-    using SType = typename std::conditional<BVH_N==4 && std::is_same<S,float>::value, v4uf, UT_FixedVector<S,BVH_N>>::type;
-
-    /// An upper bound on the squared distance from myAverageP to the farthest point in the box.
-    SType myMaxPDist2;
-
-    /// Centre of mass of the mesh surface in this box
-    UT_FixedVector<Type,3> myAverageP;
-
-    /// Unnormalized, area-weighted normal of the mesh in this box
-    UT_FixedVector<Type,3> myN;
-
-#if TAYLOR_SERIES_ORDER >= 1
-    /// Values for Omega_1
-    /// @{
-    UT_FixedVector<Type,3> myNijDiag;  // Nxx, Nyy, Nzz
-    Type myNxy_Nyx;               // Nxy+Nyx
-    Type myNyz_Nzy;               // Nyz+Nzy
-    Type myNzx_Nxz;               // Nzx+Nxz
-    /// @}
-#endif
-
-#if TAYLOR_SERIES_ORDER >= 2
-    /// Values for Omega_2
-    /// @{
-    UT_FixedVector<Type,3> myNijkDiag; // Nxxx, Nyyy, Nzzz
-    Type mySumPermuteNxyz;        // (Nxyz+Nxzy+Nyzx+Nyxz+Nzxy+Nzyx) = 2*(Nxyz+Nyzx+Nzxy)
-    Type my2Nxxy_Nyxx; // Nxxy+Nxyx+Nyxx = 2Nxxy+Nyxx
-    Type my2Nxxz_Nzxx; // Nxxz+Nxzx+Nzxx = 2Nxxz+Nzxx
-    Type my2Nyyz_Nzyy; // Nyyz+Nyzy+Nzyy = 2Nyyz+Nzyy
-    Type my2Nyyx_Nxyy; // Nyyx+Nyxy+Nxyy = 2Nyyx+Nxyy
-    Type my2Nzzx_Nxzz; // Nzzx+Nzxz+Nxzz = 2Nzzx+Nxzz
-    Type my2Nzzy_Nyzz; // Nzzy+Nzyz+Nyzz = 2Nzzy+Nyzz
-    /// @}
-#endif
-};
 
 template<typename T,typename S>
 inline UT_SolidAngle<T,S>::UT_SolidAngle()
